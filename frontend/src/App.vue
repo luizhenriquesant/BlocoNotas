@@ -71,7 +71,7 @@ export default {
       }
       this.isLoadingMore = true;
 
-      let url = 'http://192.168.15.8:3000/message';
+      let url = 'api/message';
       const chatWindow = this.$el.querySelector('.chat-window');
       const oldScrollHeight = chatWindow.scrollHeight;
 
@@ -110,7 +110,7 @@ export default {
       this.messages.push(newMessage);
       this.$nextTick(() => { this.$el.querySelector('.chat-window').scrollTop = this.$el.querySelector('.chat-window').scrollHeight; });
       try {
-        const response = await axios.post('http://192.168.15.8:3000/message', { text: newMessage.text, timestamp: newMessage.timestamp });
+        const response = await axios.post('api/message', { text: newMessage.text, timestamp: newMessage.timestamp });
         const messageIndex = this.messages.findIndex(msg => msg.id === tempId);
         if (messageIndex !== -1) this.messages[messageIndex].id = response.data.id;
       } catch (error) {

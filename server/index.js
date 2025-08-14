@@ -1,5 +1,6 @@
 const Fastify = require('fastify');
 const cors = require('@fastify/cors');
+const functions = require('firebase-functions');
 const messageRoutes = require('./routes/messages.routes.js');
 
 require('dotenv').config();
@@ -11,7 +12,7 @@ fastify.register(cors, {
     methods: ['GET', 'POST', 'PUT', 'DELETE']
 });
 
-fastify.register(messageRoutes);
+fastify.register(messageRoutes, { prefix: '/api' });
 
 const start = async () => {
     try {
@@ -22,4 +23,5 @@ const start = async () => {
     }
 };
 
+exports.api = functions.https.onRequest(fastify.server);
 start();
