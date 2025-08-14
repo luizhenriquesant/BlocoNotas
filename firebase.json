@@ -1,7 +1,14 @@
 {
   "functions": {
     "source": "server",
-    "predeploy": "npm --prefix \"$RESOURCE_DIR\" install"
+    "codebase": "default",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "*.local"
+    ]
   },
   "hosting": {
     "public": "frontend/dist",

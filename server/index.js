@@ -1,27 +1,26 @@
+const { onRequest } = require('firebase-functions/v2/https');
+const { setGlobalOptions } = require('firebase-functions/v2');
 const Fastify = require('fastify');
-const cors = require('@fastify/cors');
-const functions = require('firebase-functions');
-const messageRoutes = require('./routes/messages.routes.js');
+const messageRoutes = require('./routes/messages.routes');
 
-require('dotenv').config();
+setGlobalOptions({ region: 'southamerica-east1' });
 
-const fastify = Fastify({ logger: true });
+const app = Fastify({ logger: true });
 
-fastify.register(cors, {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
+app.register(require('@fastify/formbody'));
+app.register(require('@fastify/cors'), {
+  origin: true,
+  methods: ['GET', 'POST', 'OPTIONS']
 });
+app.addContentTypeParser('application/json', {}, (req, payload, done) => {
+    req.rawBody = payload.rawBody;
+    done(null, payload.body);
+});
+app.register(messageRoutes, { prefix: '/api' });
 
-fastify.register(messageRoutes, { prefix: '/api' });
-
-const start = async () => {
-    try {
-        await fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' });
-    } catch (err) {
-        fastify.log.error(err);
-        process.exit(1);
-    }
-};
-
-exports.api = functions.https.onRequest(fastify.server);
-start();
+exports.api = onRequest({ memory: '256MiB' }, (req, res) => {
+  app.ready(err => {
+    if (err) throw err;
+    app.server.emit('request', req, res);
+  });
+});

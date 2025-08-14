@@ -1,8 +1,8 @@
-const {postMessage, getAllMessages} =  require('../controllers/message/message.controller.js');
+const messageController = require('../controllers/message/message.controller');
 
 function messageRoutes(fastify) {
-    fastify.post('/message', postMessage);
-    fastify.get('/message', getAllMessages);
+  fastify.get('/message', messageController.getAllMessages);
+  fastify.post('/message', messageController.postMessage);
 }
 
 module.exports = messageRoutes;
